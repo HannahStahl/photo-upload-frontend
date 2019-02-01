@@ -1,0 +1,20 @@
+.Photo form {
+  padding-bottom: 15px;
+}
+
+.Photo form textarea {
+  height: 300px;
+  font-size: 16px;
+}
+
+.Photo .form-group {
+  margin-bottom: 30px;
+}
+
+.Photo .image-form-group {
+  margin-bottom: 0px;
+}
+
+.Photo .form-control-static img {
+  max-width: 50%;
+}

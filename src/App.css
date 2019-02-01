@@ -1,0 +1,16 @@
+.App {
+  margin-top: 15px;
+}
+
+.App .navbar-brand {
+  font-weight: bold;
+}
+
+.App .back-button {
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.App .back-button:hover {
+  color: #333;
+}
