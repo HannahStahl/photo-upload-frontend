@@ -4,3 +4,9 @@
   height: 200px;
   display: inline-block;
 }
+
+@media (max-width : 767px) {
+  .photos {
+    max-width: 90%;
+  }
+}
