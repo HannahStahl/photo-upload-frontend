@@ -34,7 +34,7 @@ const prod = {
     IDENTITY_POOL_ID: "us-east-1:bace0f77-9150-495b-b186-3ad92f77d40c"
   },
   cloudFront: {
-    URL: "dbtk1jpf7jtg3.cloudfront.net"
+    URL: "https://dbtk1jpf7jtg3.cloudfront.net/"
   }
 };
 
