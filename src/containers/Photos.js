@@ -20,7 +20,7 @@ class Photos extends Component {
 
   render() {
     return (
-      <div>
+      <div className="photos-grid">
         <ImgContainer
           photos={this.state.photos}
           onSortEnd={this.onSortEnd}

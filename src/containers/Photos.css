@@ -1,7 +1,13 @@
+.photos-grid div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .photos div:last-child div * {
   margin: 10px;
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   display: inline-block;
 }
 

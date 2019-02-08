@@ -10,8 +10,8 @@ class Image extends Component {
     this.state = {
       photo: props.photo,
       style: {
-        height: 200,
-        width: 200,
+        height: 250,
+        width: 250,
         objectFit: 'cover',
         margin: '10px',
         cursor: 'pointer'
