@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { API } from "aws-amplify";
 import { Link } from "react-router-dom";
-import { LinkContainer } from "react-router-bootstrap";
-import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
-import PhotoPreview from "./PhotoPreview";
+import { PageHeader } from "react-bootstrap";
+import Photos from "./Photos";
 import "./Home.css";
+import LoaderButton from "../components/LoaderButton";
+import config from "../config";
 
 export default class Home extends Component {
   constructor(props) {
@@ -12,13 +13,19 @@ export default class Home extends Component {
 
     this.state = {
       isLoading: true,
+      isPublishing: false,
+      buttonEnabled: false,
+      saved: false,
       photos: []
     };
+
+    this.handleSave = this.handleSave.bind(this);
+    this.deletePhoto = this.deletePhoto.bind(this);
+    this.addPhoto = this.addPhoto.bind(this);
+    this.enableButton = this.enableButton.bind(this);
   }
 
   async componentDidMount() {
-    this.props.reenterHomePage();
-
     if (!this.props.isAuthenticated) {
       return;
     }
@@ -37,21 +44,6 @@ export default class Home extends Component {
     return API.get("photos", "/photos");
   }
 
-  renderPhotosList(photos) {
-    return photos.map(
-      (photo, i) => (
-        <LinkContainer
-          key={photo.photoId}
-          to={`/photos/${photo.photoId}`}
-        >
-          <ListGroupItem>
-            <PhotoPreview photo={photo} />
-          </ListGroupItem>
-        </LinkContainer>
-      )
-    );
-  }
-
   renderLander() {
     return (
       <div className="lander">
@@ -68,13 +60,61 @@ export default class Home extends Component {
 
   renderPhotos() {
     return (
-      <div className="photos">
-        <PageHeader>Your Photos</PageHeader>
-        <ListGroup>
-          {!this.state.isLoading && this.renderPhotosList(this.state.photos)}
-        </ListGroup>
+      <div>
+        <div className="photos" id="photos">
+          <PageHeader>
+            Your Photos
+            <p
+              className="logout-link"
+              onClick={this.props.handleLogout}
+            >
+              Logout
+            </p>
+          </PageHeader>
+          {!this.state.isLoading && <Photos photos={this.state.photos} enableButton={this.enableButton} />}
+        </div>
+        <LoaderButton
+          block
+          bsStyle="primary"
+          bsSize="large"
+          disabled={!this.state.buttonEnabled}
+          type="submit"
+          isLoading={this.state.isPublishing}
+          text={this.state.saved ? "Saved!" : "Save"}
+          loadingText="Saving..."
+          onClick={this.handleSave}
+        />
       </div>
     );
+  }
+
+  enableButton() {
+    this.setState({ buttonEnabled: true, saved: false });
+  }
+
+  deletePhoto(photo) {
+    API.del("photos", `/photos/${photo.photoId}`);
+  }
+
+  addPhoto(photo, newRank) {
+    var imageURL = photo.firstChild.firstChild.getAttribute("src");
+    var image = imageURL.split(config.cloudFront.URL)[1];
+    return API.post("photos", "/photos", {
+      body: {
+        image,
+        imageRank: newRank.toString()
+      }
+    });
+  }
+
+  handleSave() {
+    this.setState({ isPublishing: true });
+    var photos = document.getElementById("photos").lastChild.firstChild.childNodes;
+    for (var i = 0; i < photos.length; i++) {
+      this.deletePhoto(this.state.photos[i]);
+      this.addPhoto(photos[i], i);
+    }
+    this.setState({ isPublishing: false, buttonEnabled: false, saved: true });
   }
 
   render() {

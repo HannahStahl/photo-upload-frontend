@@ -1,0 +1,6 @@
+.photos div:last-child div * {
+  margin: 10px;
+  width: 200px;
+  height: 200px;
+  display: inline-block;
+}

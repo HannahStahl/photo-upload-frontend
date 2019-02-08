@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { API, Storage } from "aws-amplify";
-import { Image, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { API } from "aws-amplify";
+import { Image, FormGroup, FormControl } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { s3Upload } from "../libs/awsLib";
-import "./Photo.css";
+import config from '../config';
+import "./ImageModal.css";
 
 export default class Photo extends Component {
   constructor(props) {
@@ -15,20 +16,19 @@ export default class Photo extends Component {
       isPublishing: null,
       photo: null,
       imageRank: "",
-      imageURL: null
+      imageURL: null,
+      buttonEnabled: false
     };
   }
 
   async componentDidMount() {
-    this.props.leaveHomePage();
-
     try {
       let imageURL;
       const photo = await this.getPhoto();
       const { image, imageRank } = photo;
 
       if (image) {
-        imageURL = await Storage.vault.get(image);
+        imageURL = config.cloudFront.URL + image;
       }
 
       this.setState({
@@ -42,17 +42,13 @@ export default class Photo extends Component {
   }
 
   getPhoto() {
-    return API.get("photos", `/photos/${this.props.match.params.id}`);
+    return API.get("photos", `/photos/${this.props.photo.photoId}`);
   }
 
   updatePhoto(photo) {
-    return API.put("photos", `/photos/${this.props.match.params.id}`, {
+    return API.put("photos", `/photos/${this.props.photo.photoId}`, {
       body: photo
     });
-  }
-
-  validateForm() {
-    return true;
   }
 
   formatFilename(str) {
@@ -61,7 +57,7 @@ export default class Photo extends Component {
 
   handleFileChange = event => {
     this.file = event.target.files[0];
-    this.setState({ imageURL: URL.createObjectURL(this.file) });
+    this.setState({ imageURL: URL.createObjectURL(this.file), buttonEnabled: true });
   }
 
   handlePublish = async event => {
@@ -89,9 +85,11 @@ export default class Photo extends Component {
 
       await this.updatePhoto({
         image: image || this.state.photo.image,
-        imageRank: "0",
+        imageRank: this.state.photo.imageRank
       });
-      this.props.history.push("/");
+
+      this.props.updatePhotoInGrid(image);
+      this.props.handleCloseModal();
     } catch (e) {
       alert(e);
       this.setState({ isPublishing: false });
@@ -105,21 +103,18 @@ export default class Photo extends Component {
           <form onSubmit={this.handlePublish}>
             {this.state.imageURL &&
               <FormGroup className="image-form-group">
-                <ControlLabel>Image</ControlLabel>
                 <FormControl.Static>
                   <Image src={this.state.imageURL} responsive />
                 </FormControl.Static>
               </FormGroup>}
             <FormGroup controlId="file">
-              {!this.state.photo.image &&
-                <ControlLabel>Image</ControlLabel>}
               <FormControl onChange={this.handleFileChange} type="file" />
             </FormGroup>
             <LoaderButton
               block
               bsStyle="primary"
               bsSize="large"
-              disabled={!this.validateForm()}
+              disabled={!this.state.buttonEnabled}
               type="submit"
               isLoading={this.state.isPublishing}
               text="Save"

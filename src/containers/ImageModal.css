@@ -15,6 +15,16 @@
   margin-bottom: 0px;
 }
 
-.Photo .form-control-static img {
-  max-width: 50%;
+.modal-content {
+  max-width: 500px;
+}
+
+.modal-title {
+  font-family: "Open Sans", sans-serif;
+  padding-top: 10px;
+}
+
+.modal-header {
+  border-bottom: none;
+  padding-bottom: 0px;
 }

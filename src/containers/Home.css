@@ -1,3 +1,7 @@
+.Home {
+  margin-bottom: 50px;
+}
+
 .Home .lander {
   padding: 80px 0;
   text-align: center;
@@ -20,6 +24,14 @@
   margin-right: 20px;
 }
 
+.Home .page-header {
+  margin-bottom: 0px;
+}
+
+.Home .photos {
+  margin-bottom: 50px;
+}
+
 .Home .photos h1 {
   font-family: "Open Sans", sans-serif;
 }
@@ -31,4 +43,20 @@
   line-height: 1.5;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.Home button.LoaderButton.btn.btn-lg.btn-primary.btn-block {
+  width: 100px;
+}
+
+.logout-link {
+  float: right;
+  color: rgba(119, 119, 119);
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.logout-link:hover {
+  cursor: pointer;
+  color: black;
 }
