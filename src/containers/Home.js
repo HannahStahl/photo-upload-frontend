@@ -115,7 +115,7 @@ export default class Home extends Component {
     var photos = document.getElementById("photos").lastChild.firstChild.childNodes;
     for (var i = 0; i < photos.length; i++) {
       console.log("about to enter deletePhoto");
-      this.deletePhoto(this.state.photos[i]);
+      console.log(this.deletePhoto(this.state.photos[i]));
       console.log("about to enter addPhoto");
       this.addPhoto(photos[i], i);
     }
