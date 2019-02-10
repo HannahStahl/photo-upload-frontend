@@ -93,10 +93,13 @@ export default class Home extends Component {
   }
 
   deletePhoto(photo) {
-    API.del("photos", `/photos/${photo.photoId}`);
+    console.log("in deletePhoto");
+    console.log("photo.photoId: ", photo.photoId);
+    return API.del("photos", `/photos/${photo.photoId}`);
   }
 
   addPhoto(photo, newRank) {
+    console.log("in addPhoto");
     var imageURL = photo.firstChild.firstChild.getAttribute("src");
     var image = imageURL.split(config.cloudFront.URL)[1];
     return API.post("photos", "/photos", {
@@ -111,7 +114,9 @@ export default class Home extends Component {
     this.setState({ isPublishing: true });
     var photos = document.getElementById("photos").lastChild.firstChild.childNodes;
     for (var i = 0; i < photos.length; i++) {
+      console.log("about to enter deletePhoto");
       this.deletePhoto(this.state.photos[i]);
+      console.log("about to enter addPhoto");
       this.addPhoto(photos[i], i);
     }
     this.setState({ isPublishing: false, buttonEnabled: false, saved: true });
