@@ -50,6 +50,7 @@ class Image extends Component {
     this.setState({
       imageURL: config.cloudFront.URL + image
     });
+    this.props.getPhoto(this.state.photo.photoId);
   }
 
   componentDidMount() {

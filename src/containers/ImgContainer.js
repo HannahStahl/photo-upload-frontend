@@ -10,6 +10,7 @@ const ImgContainer = SortableContainer((props) => {
           key={photo.photoId}
           index={index}
           photo={photo}
+          getPhoto={props.getPhoto}
         />
       ))}
     </div>

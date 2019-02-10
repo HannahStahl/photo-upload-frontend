@@ -5,7 +5,6 @@ import { PageHeader } from "react-bootstrap";
 import Photos from "./Photos";
 import "./Home.css";
 import LoaderButton from "../components/LoaderButton";
-import config from "../config";
 
 export default class Home extends Component {
   constructor(props) {
@@ -20,24 +19,47 @@ export default class Home extends Component {
     };
 
     this.handleSave = this.handleSave.bind(this);
-    this.deletePhoto = this.deletePhoto.bind(this);
-    this.addPhoto = this.addPhoto.bind(this);
+    this.getPhoto = this.getPhoto.bind(this);
+    this.getPhotos = this.getPhotos.bind(this);
+    this.updatePhotos = this.updatePhotos.bind(this);
     this.enableButton = this.enableButton.bind(this);
   }
 
-  async componentDidMount() {
-    if (!this.props.isAuthenticated) {
-      return;
+  async getPhoto(photoId) {
+    try {
+      const photo = await this.photo(photoId);
+      this.setState({
+        photos: this.state.photos.map(function(photoInList) {
+          if (photoInList.photoId === photoId) {
+            return photo;
+          }
+          return photoInList;
+        })
+      });
+    } catch (e) {
+      alert(e);
     }
+  }
 
+  async getPhotos() {
     try {
       const photos = await this.photos();
       this.setState({ photos });
     } catch (e) {
       alert(e);
     }
+  }
 
+  async componentDidMount() {
+    if (!this.props.isAuthenticated) {
+      return;
+    }
+    await this.getPhotos();
     this.setState({ isLoading: false });
+  }
+
+  photo(photoId) {
+    return API.get("photos", `/photos/${photoId}`);
   }
 
   photos() {
@@ -71,7 +93,13 @@ export default class Home extends Component {
               Logout
             </p>
           </PageHeader>
-          {!this.state.isLoading && <Photos photos={this.state.photos} enableButton={this.enableButton} />}
+          {!this.state.isLoading &&
+            <Photos
+              photos={this.state.photos}
+              getPhoto={this.getPhoto}
+              updatePhotos={this.updatePhotos}
+              enableButton={this.enableButton}
+          />}
         </div>
         <LoaderButton
           block
@@ -92,29 +120,29 @@ export default class Home extends Component {
     this.setState({ buttonEnabled: true, saved: false });
   }
 
-  deletePhoto(photo) {
-    return API.del("photos", `/photos/${photo.photoId}`);
-  }
-
-  addPhoto(photo, newRank) {
-    var imageURL = photo.firstChild.firstChild.getAttribute("src");
-    var image = imageURL.split(config.cloudFront.URL)[1];
-    return API.post("photos", "/photos", {
+  updateImageRank(photo, newRank) {
+    return API.put("photos", `/photos/${photo.photoId}`, {
       body: {
-        image,
-        imageRank: newRank.toString()
+        image: photo.image,
+        imageRank: newRank
       }
     });
   }
 
+  updatePhotos(photos) {
+    this.setState({ photos });
+  }
+
   handleSave() {
     this.setState({ isPublishing: true });
-    var photos = document.getElementById("photos").lastChild.firstChild.childNodes;
-    for (var i = 0; i < photos.length; i++) {
-      this.deletePhoto(this.state.photos[i]);
-      this.addPhoto(photos[i], i);
+    for (var i = 0; i < 12; i++) {
+      this.updateImageRank(this.state.photos[i], i);
     }
-    this.setState({ isPublishing: false, buttonEnabled: false, saved: true });
+    this.setState({
+      isPublishing: false,
+      buttonEnabled: false,
+      saved: true
+    });
   }
 
   render() {

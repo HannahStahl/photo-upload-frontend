@@ -9,13 +9,19 @@ class Photos extends Component {
     refresh: false
   };
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      photos: nextProps.photos
+    });
+  }
+
   onSortEnd = ({oldIndex, newIndex}) => {
     if (oldIndex !== newIndex) {
       this.props.enableButton();
     }
-    this.setState({
-      photos: arrayMove(this.state.photos, oldIndex, newIndex)
-    });
+    const photos = arrayMove(this.state.photos, oldIndex, newIndex);
+    this.setState({ photos });
+    this.props.updatePhotos(photos);
   };
 
   render() {
@@ -23,6 +29,7 @@ class Photos extends Component {
       <div className="photos-grid">
         <ImgContainer
           photos={this.state.photos}
+          getPhoto={this.props.getPhoto}
           onSortEnd={this.onSortEnd}
           pressDelay={100}
           axis="xy"
