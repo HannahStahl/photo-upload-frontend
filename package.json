@@ -26,6 +26,7 @@
     "serialize-javascript": "^6.0.0",
     "sockjs": "^0.3.21",
     "ua-parser-js": "^1.0.2",
+    "url-parse": "^1.5.9",
     "yargs-parser": "^21.0.0"
   },
   "scripts": {
